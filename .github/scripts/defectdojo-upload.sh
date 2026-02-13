@@ -61,7 +61,8 @@ find_or_create_product() {
     local encoded_product_name=$(echo "${PRODUCT_NAME}" | jq -sRr @uri)
     local response=$(api_request "GET" "products/?name=${encoded_product_name}" "" "false")
     
-    local count=$(echo "${response}" | jq -r '.count // 0')
+    local count=$(echo "${response}" | jq -r '.count // 0' 2>/dev/null)
+    count=${count:-0}
     
     if [ "$count" -gt 0 ]; then
         local product_id=$(echo "${response}" | jq -r '.results[0].id')
