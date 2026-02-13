@@ -22,15 +22,15 @@ SOURCE_CODE_MANAGEMENT_URI="${SOURCE_CODE_MANAGEMENT_URI}"
 
 
 log_info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
+    echo -e "${GREEN}[INFO]${NC} $1" >&2
 }
 
 log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
+    echo -e "${YELLOW}[WARN]${NC} $1" >&2
 }
 
 log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+    echo -e "${RED}[ERROR]${NC} $1" >&2
 }
 
 
@@ -148,15 +148,17 @@ import_scan() {
     
     log_info "Importing ${scan_name} scan from: ${scan_file}"
     
-    local form_data="-F \"scan_type=${scan_type}\" \
-        -F \"file=@${scan_file}\" \
-        -F \"engagement=${engagement_id}\" \
-        -F \"minimum_severity=Info\" \
-        -F \"active=true\" \
-        -F \"verified=false\" \
-        -F \"scan_date=$(date +%Y-%m-%d)\""
+    local url="${DEFECTDOJO_URL}/api/v2/import-scan/"
     
-    local response=$(api_request "POST" "import-scan/" "${form_data}" "true")
+    local response=$(curl -s -X POST "${url}" \
+        -H "Authorization: Token ${DEFECTDOJO_API_TOKEN}" \
+        -F "scan_type=${scan_type}" \
+        -F "file=@${scan_file}" \
+        -F "engagement=${engagement_id}" \
+        -F "minimum_severity=Info" \
+        -F "active=true" \
+        -F "verified=false" \
+        -F "scan_date=$(date +%Y-%m-%d)")
     
     local test_id=$(echo "${response}" | jq -r '.test // .id // empty')
     
