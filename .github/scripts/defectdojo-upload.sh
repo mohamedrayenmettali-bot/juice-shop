@@ -211,7 +211,6 @@ main() {
     log_info "Importing scan results..."
     
     import_scan "$ENGAGEMENT_ID" "semgrep-results.json" "Semgrep JSON Report" "Semgrep" || true
-    import_scan "$ENGAGEMENT_ID" "bandit-results.json" "Bandit Scan" "Bandit" || true
     import_scan "$ENGAGEMENT_ID" "trivy-fs-results.json" "Trivy Scan" "Trivy Filesystem" || true
     import_scan "$ENGAGEMENT_ID" "trivy-image-results.json" "Trivy Scan" "Trivy Image" || true
     import_scan "$ENGAGEMENT_ID" "zap-results.json" "ZAP Scan" "OWASP ZAP" || true

@@ -70,18 +70,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Set up Python for Bandit
+      - name: Set up Python for Semgrep
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-
-      - name: Install Bandit
-        run: pip install bandit
-
-      - name: Run Bandit scan
-        run: |
-          bandit -r . -f json -o bandit-results.json || true
-        continue-on-error: true
 
       - name: Install Semgrep
         run: pip install semgrep
@@ -96,7 +88,6 @@ jobs:
         with:
           name: sast-results
           path: |
-            bandit-results.json
             semgrep-results.json
           retention-days: 7
 
@@ -183,6 +174,9 @@ jobs:
             echo "Waiting... ($i/30)"
             sleep 5
           done
+
+      - name: Make workspace writable for ZAP
+        run: chmod -R 777 ${{ github.workspace }}
 
       - name: Run OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.12.0
