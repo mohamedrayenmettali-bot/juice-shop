@@ -183,6 +183,7 @@ jobs:
         with:
           target: 'http://localhost:3000'
           cmd_options: '-j'
+          allow_issue_writing: false
         continue-on-error: true
 
       - name: Convert ZAP report to JSON
