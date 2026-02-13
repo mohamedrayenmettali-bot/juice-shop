@@ -146,7 +146,9 @@ import_scan() {
         return 0
     fi
     
-    log_info "Importing ${scan_name} scan from: ${scan_file}"
+    local file_size=$(wc -c < "${scan_file}")
+    log_info "Importing ${scan_name} scan from: ${scan_file} (${file_size} bytes)"
+    log_info "File preview: $(head -c 100 "${scan_file}")"
     
     local url="${DEFECTDOJO_URL}/api/v2/import-scan/"
     

@@ -228,7 +228,19 @@ jobs:
         continue-on-error: true
 
       - name: List downloaded artifacts
-        run: ls -la
+        run: |
+          echo "=== All files in workspace ==="
+          ls -la
+          echo "=== ZAP report check ==="
+          if [ -f report_json.json ]; then
+            echo "report_json.json exists ($(wc -c < report_json.json) bytes)"
+            head -c 200 report_json.json
+            echo
+          else
+            echo "report_json.json NOT FOUND"
+          fi
+          echo "=== All JSON files ==="
+          find . -maxdepth 1 -name '*.json' -exec ls -la {} \;
 
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
