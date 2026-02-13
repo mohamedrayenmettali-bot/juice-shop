@@ -194,8 +194,9 @@ main() {
     
     # Validate required environment variables
     if [ -z "$DEFECTDOJO_URL" ] || [ -z "$DEFECTDOJO_API_TOKEN" ]; then
-        log_error "Missing required environment variables: DEFECTDOJO_URL and/or DEFECTDOJO_API_TOKEN"
-        exit 1
+        log_warn "Missing required environment variables: DEFECTDOJO_URL and/or DEFECTDOJO_API_TOKEN"
+        log_warn "Skipping DefectDojo upload. Configure these secrets to enable integration."
+        exit 0
     fi
     
     # Step 1: Find or create product
