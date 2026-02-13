@@ -225,7 +225,7 @@ jobs:
     name: DefectDojo Upload
     runs-on: ubuntu-latest
     needs: [sast, sca, dast]
-    if: always() && secrets.DEFECTDOJO_URL != '' && secrets.DEFECTDOJO_API_TOKEN != ''
+    if: always()
 
     steps:
       - name: Checkout code
