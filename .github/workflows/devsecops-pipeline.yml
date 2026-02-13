@@ -186,13 +186,6 @@ jobs:
           allow_issue_writing: false
         continue-on-error: true
 
-      - name: Convert ZAP report to JSON
-        run: |
-          if [ -f report_html.html ]; then
-            echo '{"zap_version":"baseline","scan_results":"completed"}' > zap-results.json
-          fi
-        continue-on-error: true
-
       - name: Stop Juice Shop container
         if: always()
         run: docker stop juice-shop && docker rm juice-shop
@@ -202,7 +195,7 @@ jobs:
         with:
           name: dast-results
           path: |
-            zap-results.json
+            report_json.json
             report_html.html
           retention-days: 7
 
