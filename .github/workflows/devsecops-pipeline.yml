@@ -151,53 +151,54 @@ jobs:
     needs: build-and-test
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Download Docker image
-        uses: actions/download-artifact@v4
-        with:
-          name: docker-image
+    - name: Download Docker image
+      uses: actions/download-artifact@v4
+      with:
+        name: docker-image
 
-      - name: Load Docker image
-        run: docker load -i juice-shop-image.tar
+    - name: Load Docker image
+      run: docker load -i juice-shop-image.tar
 
-      - name: Start Juice Shop container
-        run: |
-          docker run -d --name juice-shop -p 3000:3000 ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
-          echo "Waiting for application to start..."
-          for i in {1..30}; do
-            if curl -f http://localhost:3000 > /dev/null 2>&1; then
-              echo "Application is ready!"
-              break
-            fi
-            echo "Waiting... ($i/30)"
-            sleep 5
-          done
+    - name: Start Juice Shop container
+      run: |
+        docker run -d --name juice-shop -p 3000:3000 $DOCKER_IMAGE_NAME:${{ github.sha }}
+        echo "Waiting for application to start..."
+        for i in {1..30}; do
+          if curl -f http://localhost:3000 > /dev/null 2>&1; then
+            echo "Application is ready!"
+            break
+          fi
+          if [ $i -eq 30 ]; then
+            echo "Application failed to start"
+            exit 1
+          fi
+          sleep 5
+        done
 
-      - name: Make workspace writable for ZAP
-        run: chmod -R 777 ${{ github.workspace }}
+    - name: Run OWASP ZAP Baseline Scan
+      uses: zaproxy/action-baseline@v0.14.0
+      with:
+        target: 'http://localhost:3000'
+        cmd_options: '-j'
+        allow_issue_writing: false
+      continue-on-error: true
 
-      - name: Run OWASP ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.14.0
-        with:
-          target: 'http://localhost:3000'
-          cmd_options: '-j'
-          allow_issue_writing: false
-        continue-on-error: true
+    - name: Stop Juice Shop container
+      if: always()
+      run: docker stop juice-shop && docker rm juice-shop
 
-      - name: Stop Juice Shop container
-        if: always()
-        run: docker stop juice-shop && docker rm juice-shop
+    - name: Upload DAST artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: dast-results
+        path: |
+          zap-report.json
+          zap-report.html
+        retention-days: 7
 
-      - name: Upload DAST artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dast-results
-          path: |
-            report_json.json
-            report_html.html
-          retention-days: 7
 
   defectdojo-upload:
     name: DefectDojo Upload
