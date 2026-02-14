@@ -215,7 +215,7 @@ main() {
     import_scan "$ENGAGEMENT_ID" "semgrep-results.json" "Semgrep JSON Report" "Semgrep" || true
     import_scan "$ENGAGEMENT_ID" "trivy-fs-results.json" "Trivy Scan" "Trivy Filesystem" || true
     import_scan "$ENGAGEMENT_ID" "trivy-image-results.json" "Trivy Scan" "Trivy Image" || true
-    import_scan "$ENGAGEMENT_ID" "report_html.html" "ZAP Scan" "OWASP ZAP" || true
+    import_scan "$ENGAGEMENT_ID" "report_json.json" "ZAP Scan" "OWASP ZAP" || true
     import_scan "$ENGAGEMENT_ID" "dependency-check-report.xml" "Dependency Check Scan" "OWASP Dependency-Check" || true
     
     # Step 4: Close engagement
