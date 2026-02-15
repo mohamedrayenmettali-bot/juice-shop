@@ -182,7 +182,7 @@ jobs:
       uses: zaproxy/action-baseline@v0.14.0
       with:
         target: 'http://localhost:3000'
-        cmd_options: '-j'
+        cmd_options: '-j -x report_xml.xml'
         allow_issue_writing: false
       continue-on-error: true
 
@@ -195,8 +195,9 @@ jobs:
       with:
         name: dast-results
         path: |
-          zap-report.json
-          zap-report.html
+          report_html.html
+          report_json.json
+          report_xml.xml
         retention-days: 7
 
 
